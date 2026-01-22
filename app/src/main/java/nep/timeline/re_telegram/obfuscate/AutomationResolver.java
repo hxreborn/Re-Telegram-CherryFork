@@ -1,72 +1,43 @@
 package nep.timeline.re_telegram.obfuscate;
 
-import nep.timeline.re_telegram.ClientChecker;
+import nep.timeline.re_telegram.ClientChecker.ClientType;
 import nep.timeline.re_telegram.Utils;
-import nep.timeline.re_telegram.obfuscate.resolves.Nekogram;
-import nep.timeline.re_telegram.obfuscate.resolves.Yukigram;
 
-public class AutomationResolver {
-    public static String resolve(String className, String pkgName)
-    {
-        if (ClientChecker.check(ClientChecker.ClientType.Nekogram, pkgName))
-        {
-            if (Nekogram.ClassResolver.has(className))
-                return Nekogram.ClassResolver.resolve(className);
-        }
-        else if (ClientChecker.check(ClientChecker.ClientType.Yukigram, pkgName))
-        {
-            if (Yukigram.ClassResolver.has(className))
-                return Yukigram.ClassResolver.resolve(className);
-        }
+public final class AutomationResolver {
 
-        return className;
+    private AutomationResolver() {}
+
+    public static String resolve(String className) {
+        var lookup = getLookup();
+        if (lookup == null) return className;
+        var resolved = lookup.resolveClass(className);
+        return resolved != null ? resolved : className;
     }
 
-    public static String resolve(String className, String name, ResolverType type, String pkgName)
-    {
-        if (ClientChecker.check(ClientChecker.ClientType.Nekogram, pkgName))
-        {
-            if (type == ResolverType.Field)
-            {
-                if (Nekogram.FieldResolver.has(className, name))
-                    return Nekogram.FieldResolver.resolve(className, name);
-            }
-            else if (type == ResolverType.Method)
-            {
-                if (Nekogram.MethodResolver.has(className, name))
-                    return Nekogram.MethodResolver.resolve(className, name);
-            }
-        }
-        else if (ClientChecker.check(ClientChecker.ClientType.Yukigram, pkgName))
-        {
-            if (type == ResolverType.Field)
-            {
-                if (Yukigram.FieldResolver.has(className, name))
-                    return Yukigram.FieldResolver.resolve(className, name);
-            }
-            else if (type == ResolverType.Method)
-            {
-                if (Yukigram.MethodResolver.has(className, name))
-                    return Yukigram.MethodResolver.resolve(className, name);
-            }
-        }
-
-        return name;
+    public static String resolve(String className, String name, ResolverType type) {
+        var lookup = getLookup();
+        if (lookup == null) return name;
+        var resolved = type == ResolverType.Field
+            ? lookup.resolveField(className, name)
+            : lookup.resolveMethod(className, name);
+        return resolved != null ? resolved : name;
     }
 
-    public static String resolve(String className)
-    {
-        return resolve(className, Utils.pkgName);
+    // Compatibility overloads
+    public static String resolve(String className, String pkgName) {
+        return resolve(className);
     }
 
-    public static String resolve(String className, String name, ResolverType type)
-    {
-        return resolve(className, name, type, Utils.pkgName);
+    public static String resolve(String className, String name, ResolverType type, String pkgName) {
+        return resolve(className, name, type);
     }
 
-    public enum ResolverType
-    {
-        Field,
-        Method
+    private static ObfuscationResolver getLookup() {
+        var client = ClientType.fromPackage(Utils.pkgName);
+        return client != null ? client.getLookup() : null;
+    }
+
+    public enum ResolverType {
+        Field, Method
     }
 }

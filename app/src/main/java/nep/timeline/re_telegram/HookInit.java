@@ -63,6 +63,50 @@ public class HookInit implements IXposedHookLoadPackage {
 
             ApplicationLoaderHook.init(classLoader);
 
+            if (ClientChecker.check(ClientChecker.ClientType.Cherrygram)) {
+                // v9.x
+                try {
+                    Class<?> configHelper = XposedHelpers.findClassIfExists(
+                            "uz.unnarsx.cherrygram.core.helpers.FirebaseRemoteConfigHelper", classLoader
+                    );
+                    if (configHelper != null) {
+                        XposedBridge.hookMethod(
+                                XposedHelpers.findMethodBestMatch(configHelper, "toggleReTgCheck", boolean.class),
+                                new XC_MethodHook() {
+                                    @Override
+                                    protected void beforeHookedMethod(MethodHookParam param) {
+                                        param.args[0] = false;
+                                    }
+                                }
+                        );
+                        Utils.log("Cherrygram: legacy hook installed");
+                    }
+                } catch (Throwable ignored) {
+                }
+
+                // v10.x+
+                try {
+                    XposedHelpers.findAndHookMethod(
+                            "android.app.SharedPreferencesImpl",
+                            null,
+                            "getBoolean",
+                            String.class, boolean.class,
+                            new XC_MethodHook() {
+                                @Override
+                                protected void beforeHookedMethod(MethodHookParam param) {
+                                    if ("SP_ReTgCheck".equals(param.args[0])) {
+                                        param.setResult(false);
+                                    }
+                                }
+                            }
+                    );
+                    Utils.log("Cherrygram: prefs hook installed");
+                } catch (Throwable t) {
+                    Utils.log("Cherrygram: prefs hook failed");
+                    Utils.log(t);
+                }
+            }
+
             if (ClientChecker.check(ClientChecker.ClientType.Yukigram)) {
                 AntiRecallWithDatabase.initUI(classLoader);
 
@@ -85,36 +129,6 @@ public class HookInit implements IXposedHookLoadPackage {
                 AllowMoveAllChatFolder.init(classLoader);
 
             // UnlockedNoPremiumAccountsLimit.init(classLoader);
-
-            if (ClientChecker.check(ClientChecker.ClientType.Cherrygram)) {
-                try {
-                    Class<?> configHelper = XposedHelpers.findClassIfExists(
-                            "uz.unnarsx.cherrygram.core.helpers.FirebaseRemoteConfigHelper", classLoader
-                    );
-
-                    if (configHelper == null) {
-                        Utils.log("Cherrygram: FirebaseRemoteConfigHelper not found. Skipping hook.");
-                        return;
-                    }
-
-                    XposedBridge.hookMethod(
-                            XposedHelpers.findMethodBestMatch(configHelper, "toggleReTgCheck", Boolean.class),
-                            new XC_MethodHook() {
-                                @Override
-                                protected void beforeHookedMethod(MethodHookParam param) {
-                                    param.args[0] = false;
-                                    Utils.log("Cherrygram: Remote config check disabled.");
-                                }
-                            }
-                    );
-
-                } catch (XposedHelpers.ClassNotFoundError | NoSuchMethodError e) {
-                    Utils.log("Cherrygram: Hook failed - " + e.getClass().getSimpleName() + ": " + e.getMessage());
-                } catch (Throwable t) {
-                    Utils.log("Cherrygram: Unexpected error while applying hooks.");
-                    Utils.log(t);
-                }
-            }
 
             if (!onlyNeedAR(lpparam.packageName))
             {

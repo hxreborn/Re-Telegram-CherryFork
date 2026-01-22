@@ -1,158 +1,99 @@
 package nep.timeline.re_telegram.obfuscate.resolves;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
-import nep.timeline.re_telegram.obfuscate.struct.ClassInfo;
-import nep.timeline.re_telegram.obfuscate.struct.FieldInfo;
-import nep.timeline.re_telegram.obfuscate.struct.MethodInfo;
+import nep.timeline.re_telegram.obfuscate.ObfuscationResolver;
 
-public class Nekogram {
-    private static final List<ClassInfo> classList = new ArrayList<>();
-    private static final List<FieldInfo> fieldList = new ArrayList<>();
-    private static final List<MethodInfo> methodList = new ArrayList<>();
+public final class Nekogram implements ObfuscationResolver {
+    public static final Nekogram INSTANCE = new Nekogram();
 
-    static {
-        classList.add(new ClassInfo("org.telegram.messenger.ApplicationLoader", "org.telegram.messenger.b"));
-        classList.add(new ClassInfo("org.telegram.messenger.NotificationsController", "org.telegram.messenger.J"));
-        classList.add(new ClassInfo("org.telegram.messenger.NotificationCenter", "org.telegram.messenger.I"));
-        classList.add(new ClassInfo("org.telegram.messenger.DownloadController", "org.telegram.messenger.m"));
-        classList.add(new ClassInfo("org.telegram.messenger.MessagesController", "org.telegram.messenger.G"));
-        classList.add(new ClassInfo("org.telegram.messenger.MessagesStorage", "org.telegram.messenger.H"));
-        classList.add(new ClassInfo("org.telegram.messenger.MessageObject", "org.telegram.messenger.E"));
-        classList.add(new ClassInfo("org.telegram.messenger.UserConfig", "org.telegram.messenger.W"));
-        classList.add(new ClassInfo("org.telegram.ui.Cells.ChatMessageCell", "X50"));
-        classList.add(new ClassInfo("org.telegram.ui.ActionBar.Theme", "org.telegram.ui.ActionBar.q"));
-        classList.add(new ClassInfo("org.telegram.ui.ChatActivity", "org.telegram.ui.p"));
-        //classList.add(new ClassInfo("org.telegram.ui.DialogsActivity", "org.telegram.ui.G$i")); // LimitReachedReorderFolder
-        //classList.add(new ClassInfo("org.telegram.ui.FiltersSetupActivity$TouchHelperCallback", "org.telegram.ui.Components.f0$l"));
-        classList.add(new ClassInfo("org.telegram.messenger.AndroidUtilities", "org.telegram.messenger.a"));
-        classList.add(new ClassInfo("org.telegram.tgnet.TLRPC$Peer", "BI3"));
-        classList.add(new ClassInfo("org.telegram.tgnet.TLRPC$Message", "aA3"));
-        classList.add(new ClassInfo("org.telegram.tgnet.TLRPC$TL_updateDeleteMessages", "Hj4"));
-        classList.add(new ClassInfo("org.telegram.tgnet.TLRPC$TL_updateDeleteChannelMessages", "Gj4"));
+    private static final Map<String, String> CLASSES = Map.ofEntries(
+        Map.entry("org.telegram.messenger.ApplicationLoader", "org.telegram.messenger.b"),
+        Map.entry("org.telegram.messenger.NotificationsController", "org.telegram.messenger.J"),
+        Map.entry("org.telegram.messenger.NotificationCenter", "org.telegram.messenger.I"),
+        Map.entry("org.telegram.messenger.DownloadController", "org.telegram.messenger.m"),
+        Map.entry("org.telegram.messenger.MessagesController", "org.telegram.messenger.G"),
+        Map.entry("org.telegram.messenger.MessagesStorage", "org.telegram.messenger.H"),
+        Map.entry("org.telegram.messenger.MessageObject", "org.telegram.messenger.E"),
+        Map.entry("org.telegram.messenger.UserConfig", "org.telegram.messenger.W"),
+        Map.entry("org.telegram.ui.Cells.ChatMessageCell", "X50"),
+        Map.entry("org.telegram.ui.ActionBar.Theme", "org.telegram.ui.ActionBar.q"),
+        Map.entry("org.telegram.ui.ChatActivity", "org.telegram.ui.p"),
+        Map.entry("org.telegram.messenger.AndroidUtilities", "org.telegram.messenger.a"),
+        Map.entry("org.telegram.tgnet.TLRPC$Peer", "BI3"),
+        Map.entry("org.telegram.tgnet.TLRPC$Message", "aA3"),
+        Map.entry("org.telegram.tgnet.TLRPC$TL_updateDeleteMessages", "Hj4"),
+        Map.entry("org.telegram.tgnet.TLRPC$TL_updateDeleteChannelMessages", "Gj4")
+    );
 
-        //fieldList.add(new FieldInfo("MessageObject", "messageOwner", "j"));
-        fieldList.add(new FieldInfo("UserConfig", "selectedAccount", "b0"));
-        fieldList.add(new FieldInfo("TLRPC$User", "id", "a"));
-        fieldList.add(new FieldInfo("TLRPC$Peer", "channel_id", "c"));
-        fieldList.add(new FieldInfo("TLRPC$Message", "id", "a"));
-        fieldList.add(new FieldInfo("TLRPC$Message", "flags", "k"));
-        fieldList.add(new FieldInfo("TLRPC$Message", "peer_id", "d"));
-        fieldList.add(new FieldInfo("TLRPC$TL_updateDeleteMessages", "messages", "a"));
-        fieldList.add(new FieldInfo("TLRPC$TL_updateDeleteChannelMessages", "channel_id", "a"));
-        fieldList.add(new FieldInfo("TLRPC$TL_updateDeleteChannelMessages", "messages", "b"));
-        fieldList.add(new FieldInfo("Theme", "chat_timePaint", "K2"));
-        fieldList.add(new FieldInfo("MessagesController", "dialogMessagesByIds", "G"));
-        fieldList.add(new FieldInfo("MessagesController", "dialogMessage", "D"));
-        fieldList.add(new FieldInfo("NotificationCenter", "messagesDeleted", "v"));
-        fieldList.add(new FieldInfo("AndroidUtilities", "typefaceCache", "d"));
+    private static final Map<String, String> FIELDS = Map.ofEntries(
+        Map.entry("UserConfig.selectedAccount", "b0"),
+        Map.entry("TLRPC$User.id", "a"),
+        Map.entry("TLRPC$Peer.channel_id", "c"),
+        Map.entry("TLRPC$Message.id", "a"),
+        Map.entry("TLRPC$Message.flags", "k"),
+        Map.entry("TLRPC$Message.peer_id", "d"),
+        Map.entry("TLRPC$TL_updateDeleteMessages.messages", "a"),
+        Map.entry("TLRPC$TL_updateDeleteChannelMessages.channel_id", "a"),
+        Map.entry("TLRPC$TL_updateDeleteChannelMessages.messages", "b"),
+        Map.entry("Theme.chat_timePaint", "K2"),
+        Map.entry("MessagesController.dialogMessagesByIds", "G"),
+        Map.entry("MessagesController.dialogMessage", "D"),
+        Map.entry("NotificationCenter.messagesDeleted", "v"),
+        Map.entry("AndroidUtilities.typefaceCache", "d")
+    );
 
-        methodList.add(new MethodInfo("NotificationCenter", "postNotificationName", "L"));
-        methodList.add(new MethodInfo("DownloadController", "canDownloadMedia", "r"));
-        methodList.add(new MethodInfo("MessagesStorage", "markMessagesAsDeletedInternal", "t8"));
-        methodList.add(new MethodInfo("MessagesStorage", "updateDialogsWithDeletedMessagesInternal", "Pc"));
-        methodList.add(new MethodInfo("MessagesStorage", "getDatabase", "a5"));
-        methodList.add(new MethodInfo("MessageObject", "updateMessageText", "M6"));
-        methodList.add(new MethodInfo("MessageObject", "canForwardMessage", "K"));
-        methodList.add(new MethodInfo("MessageObject", "getDialogId", "G0"));
-        methodList.add(new MethodInfo("MessagesController", "isChatNoForwards", "Ab"));
-        methodList.add(new MethodInfo("MessagesController", "markDialogMessageAsDeleted", "ol"));
-        methodList.add(new MethodInfo("MessagesController", "deleteMessages", "W8"));
-        methodList.add(new MethodInfo("MessagesController", "getSponsoredMessages", "Ta"));
-        methodList.add(new MethodInfo("ChatMessageCell", "measureTime", "h7"));
-        methodList.add(new MethodInfo("ChatMessageCell", "setVisibleOnScreen", "h8"));
-        methodList.add(new MethodInfo("UserConfig", "getInstance", "s"));
-        //methodList.add(new MethodInfo("UserConfig", "isPremium", "B"));
-        methodList.add(new MethodInfo("NotificationsController", "removeNotificationsForDialog", "c2"));
-        methodList.add(new MethodInfo("NotificationsController", "removeDeletedMessagesFromNotifications", "b2"));
-        methodList.add(new MethodInfo("ChatActivity", "addSponsoredMessages", "gq"));
-        methodList.add(new MethodInfo("ChatActivity", "hasSelectedNoforwardsMessage", "ot"));
-        //methodList.add(new MethodInfo("DialogsActivity", "onDefaultTabMoved", "D"));
-        //methodList.add(new MethodInfo("FiltersSetupActivity$TouchHelperCallback", "resetDefaultPosition", "D"));
-        methodList.add(new MethodInfo("AndroidUtilities", "getTypeface", "a2"));
-        methodList.add(new MethodInfo("SQLiteDatabase", "queryFinalized", "h"));
-        methodList.add(new MethodInfo("SQLiteDatabase", "executeFast", "e"));
-        methodList.add(new MethodInfo("SQLiteCursor", "next", "j"));
-        methodList.add(new MethodInfo("SQLiteCursor", "byteBufferValue", "b"));
-        methodList.add(new MethodInfo("SQLiteCursor", "intValue", "g"));
-        methodList.add(new MethodInfo("SQLiteCursor", "longValue", "i"));
-        methodList.add(new MethodInfo("SQLiteCursor", "dispose", "d"));
-        methodList.add(new MethodInfo("SQLitePreparedStatement", "dispose", "h"));
-        methodList.add(new MethodInfo("SQLitePreparedStatement", "requery", "l"));
-        methodList.add(new MethodInfo("SQLitePreparedStatement", "bindByteBuffer", "a"));
-        methodList.add(new MethodInfo("SQLitePreparedStatement", "bindLong", "d"));
-        methodList.add(new MethodInfo("SQLitePreparedStatement", "bindInteger", "c"));
-        methodList.add(new MethodInfo("SQLitePreparedStatement", "step", "m"));
-        methodList.add(new MethodInfo("LongSparseArray", "get", "h"));
+    private static final Map<String, String> METHODS = Map.ofEntries(
+        Map.entry("NotificationCenter.postNotificationName", "L"),
+        Map.entry("DownloadController.canDownloadMedia", "r"),
+        Map.entry("MessagesStorage.markMessagesAsDeletedInternal", "t8"),
+        Map.entry("MessagesStorage.updateDialogsWithDeletedMessagesInternal", "Pc"),
+        Map.entry("MessagesStorage.getDatabase", "a5"),
+        Map.entry("MessageObject.updateMessageText", "M6"),
+        Map.entry("MessageObject.canForwardMessage", "K"),
+        Map.entry("MessageObject.getDialogId", "G0"),
+        Map.entry("MessagesController.isChatNoForwards", "Ab"),
+        Map.entry("MessagesController.markDialogMessageAsDeleted", "ol"),
+        Map.entry("MessagesController.deleteMessages", "W8"),
+        Map.entry("MessagesController.getSponsoredMessages", "Ta"),
+        Map.entry("ChatMessageCell.measureTime", "h7"),
+        Map.entry("ChatMessageCell.setVisibleOnScreen", "h8"),
+        Map.entry("UserConfig.getInstance", "s"),
+        Map.entry("NotificationsController.removeNotificationsForDialog", "c2"),
+        Map.entry("NotificationsController.removeDeletedMessagesFromNotifications", "b2"),
+        Map.entry("ChatActivity.addSponsoredMessages", "gq"),
+        Map.entry("ChatActivity.hasSelectedNoforwardsMessage", "ot"),
+        Map.entry("AndroidUtilities.getTypeface", "a2"),
+        Map.entry("SQLiteDatabase.queryFinalized", "h"),
+        Map.entry("SQLiteDatabase.executeFast", "e"),
+        Map.entry("SQLiteCursor.next", "j"),
+        Map.entry("SQLiteCursor.byteBufferValue", "b"),
+        Map.entry("SQLiteCursor.intValue", "g"),
+        Map.entry("SQLiteCursor.longValue", "i"),
+        Map.entry("SQLiteCursor.dispose", "d"),
+        Map.entry("SQLitePreparedStatement.dispose", "h"),
+        Map.entry("SQLitePreparedStatement.requery", "l"),
+        Map.entry("SQLitePreparedStatement.bindByteBuffer", "a"),
+        Map.entry("SQLitePreparedStatement.bindLong", "d"),
+        Map.entry("SQLitePreparedStatement.bindInteger", "c"),
+        Map.entry("SQLitePreparedStatement.step", "m"),
+        Map.entry("LongSparseArray.get", "h")
+    );
+
+    private Nekogram() {}
+
+    @Override
+    public String resolveClass(String className) {
+        return CLASSES.get(className);
     }
 
-    public static class ClassResolver
-    {
-        public static String resolve(String name) {
-            for (ClassInfo info : classList)
-                if (info.getOriginal().equals(name))
-                    return info.getResolved();
-
-            return null;
-        }
-
-        public static boolean has(String name)
-        {
-            boolean has = false;
-            for (ClassInfo info : classList) {
-                if (info.getOriginal().equals(name)) {
-                    has = true;
-                    break;
-                }
-            }
-            return has;
-        }
+    @Override
+    public String resolveField(String className, String fieldName) {
+        return FIELDS.get(className + "." + fieldName);
     }
 
-    public static class FieldResolver
-    {
-        public static String resolve(String className, String name) {
-            for (FieldInfo info : fieldList)
-                if (info.getClassName().equals(className) && info.getOriginal().equals(name))
-                    return info.getResolved();
-
-            return null;
-        }
-
-        public static boolean has(String className, String name)
-        {
-            boolean has = false;
-            for (FieldInfo info : fieldList) {
-                if (info.getClassName().equals(className) && info.getOriginal().equals(name)) {
-                    has = true;
-                    break;
-                }
-            }
-            return has;
-        }
-    }
-
-    public static class MethodResolver
-    {
-        public static String resolve(String className, String name) {
-            for (MethodInfo info : methodList)
-                if (info.getClassName().equals(className) && info.getOriginal().equals(name))
-                    return info.getResolved();
-
-            return null;
-        }
-
-        public static boolean has(String className, String name)
-        {
-            boolean has = false;
-            for (MethodInfo info : methodList) {
-                if (info.getClassName().equals(className) && info.getOriginal().equals(name)) {
-                    has = true;
-                    break;
-                }
-            }
-            return has;
-        }
+    @Override
+    public String resolveMethod(String className, String methodName) {
+        return METHODS.get(className + "." + methodName);
     }
 }
